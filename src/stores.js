@@ -3,7 +3,7 @@ import { configDotenv } from "dotenv";
 
 const msalConfig = {
     auth: {
-        clientId: configDotenv.OAUTH_CLIENT_ID,
+        clientId: "0426853a-440c-46ea-a168-2c573eacc496",
         redirectUri: configDotenv.OAUTH_REDIRECT_URI,
     }
     };
