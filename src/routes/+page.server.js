@@ -1,6 +1,7 @@
 import { MongoClient } from 'mongodb';
+import { configDotenv } from 'dotenv';
 
-const client = new MongoClient("mongodb://127.0.0.1:27017/testData");
+// const client = new MongoClient(configDotenv.MONGO_URL);
 
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {

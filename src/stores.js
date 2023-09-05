@@ -1,9 +1,10 @@
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
+import { configDotenv } from "dotenv";
 
 const msalConfig = {
     auth: {
-        clientId: '0426853a-440c-46ea-a168-2c573eacc496',
-        redirectUri: 'http://localhost:5173',
+        clientId: configDotenv.OAUTH_CLIENT_ID,
+        redirectUri: configDotenv.OAUTH_REDIRECT_URI,
     }
     };
 
