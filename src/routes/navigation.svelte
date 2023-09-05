@@ -1,14 +1,11 @@
 <script>
+    import { DateTime } from "luxon";
     export let quickBookPath = "/quickbook";
     export let schedulePath = "/schedule";
 
     let currentDay = new Date();
     const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
     
-    const date = new Date();
-    let currentDayIndex = date.getDate();
-    let currentMonth = date.getMonth() + 1;
-    let currentYear = date.getFullYear();
 </script>
 
 <div class="navigation-container">
@@ -17,19 +14,8 @@
     <div>
         <p>{days[currentDay.getDay()]}</p>
         <p>
-            {#if currentDayIndex < 10}
-                0{currentDayIndex}.
-            {:else}
-                {currentDayIndex}.
-            {/if}
-
-            {#if currentMonth < 10}
-                0{currentMonth}.
-            {:else}
-                {currentMonth}.
-            {/if}
-
-            {currentYear}</p>
+            {DateTime.now().toFormat("dd.MM.yyyy")}
+        </p>
     </div>
 
     <div class="button-container">
