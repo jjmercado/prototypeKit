@@ -1,6 +1,7 @@
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 import { configDotenv } from "dotenv";
 import { DateTime } from "luxon";
+import { readable } from "svelte/store";
 
 const msalConfig = {
     auth: {
@@ -86,6 +87,20 @@ export let getCurrentElement = (graphData) => {
             index--;
         }
     }
-    console.log(sortedGraph)
     return sortedGraph;
 }
+
+export let time = readable(DateTime.now(), (set) => {
+    const interval = setInterval(() => {
+        set(DateTime.now());
+    }, 1000);
+    
+    return () => {
+        clearInterval(interval);
+    };
+})
+
+
+
+
+

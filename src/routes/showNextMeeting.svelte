@@ -4,7 +4,7 @@
     import { getToken, getResponse, getCurrentElement } from "../stores"; 
     import { DateTime } from "luxon";
     
-    $: graphData = [];
+    let graphData = [];
     let organizerName;
     let eventSubject;
     let startTime;
@@ -31,7 +31,7 @@
         endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
     })
     </script>
-    
+    <!-- Wenn auf Rot zu aktueller Besprechung ändern -->
     <div class="nextMeeting-container">
         <p>
             Nächste Besprechung

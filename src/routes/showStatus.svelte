@@ -1,14 +1,14 @@
 <script>
     import { onMount } from "svelte";
-    import { getToken, getResponse, getCurrentElement } from "../stores";
+    import { getToken, getResponse, getCurrentElement, time } from "../stores";
     import { DateTime } from "luxon";
     import Clock from "./clock.svelte";
 
     let isOccupied = false;
     let graphData = [];
-    let startTime;
-    let endTime;
-    let currentTime = DateTime.now().toFormat("ff");
+    $: startTime = "";
+    $: endTime = "";
+    $: currentTime = $time.toFormat("ff");
 
     onMount(async () => {
         let getAccount = sessionStorage.getItem("msalAccount"); 
@@ -28,19 +28,13 @@
         startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
         endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
         
-        if (currentTime >= startTime && currentTime <= endTime) {
-            isOccupied = true;
-        } else {
-            isOccupied = false;
-        }
     })
-    
 </script>
 
-<div class:status-container-free={!isOccupied} class:status-container-occupied={isOccupied}>
+<div class:status-container-free={!(currentTime >= startTime && currentTime <= endTime)} class:status-container-occupied={currentTime >= startTime && currentTime <= endTime}>
     <h1>Besprechung 1.OG RG</h1>
     <Clock/>
-    {#if !isOccupied}
+    {#if !(currentTime >= startTime && currentTime <= endTime)}
         <p>Raum frei bis zum {startTime}</p>
     {:else}
         <p>Raum besetzt bis zum {endTime}</p>
@@ -66,10 +60,5 @@
         align-items: center;
         flex: 1;
         background-color: red;
-    }
-
-    img
-    {
-        width: 200px;
     }
 </style>

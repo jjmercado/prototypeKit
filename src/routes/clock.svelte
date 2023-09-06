@@ -1,24 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
-    import { DateTime } from "luxon";
-
-	let time = DateTime.now();
-
-	// these automatically update when `time`
-	// changes, because of the `$:` prefix
-	$: hours = time.hour;
-	$: minutes = time.minute;
-	$: seconds = time.second;
-
-	onMount(() => {
-		const interval = setInterval(() => {
-			time = DateTime.now();
-		}, 1000);
-
-		return () => {
-			clearInterval(interval);
-		};
-	});
+    import { time } from '../stores';
 </script>
 
 <svg viewBox="-50 -50 100 100">
@@ -34,13 +15,13 @@
 	{/each}
 
 	<!-- hour hand -->
-	<line class="hour" y1="2" y2="-20" transform="rotate({30 * hours + minutes / 2})" />
+	<line class="hour" y1="2" y2="-20" transform="rotate({30 * $time.hour + $time.minute / 2})" />
 
 	<!-- minute hand -->
-	<line class="minute" y1="4" y2="-30" transform="rotate({6 * minutes + seconds / 10})" />
+	<line class="minute" y1="4" y2="-30" transform="rotate({6 * $time.minute + $time.second / 10})" />
 
 	<!-- second hand -->
-	<g transform="rotate({6 * seconds})">
+	<g transform="rotate({6 * $time.second})">
 		<line class="second" y1="10" y2="-38" />
 		<line class="second-counterweight" y1="10" y2="2" />
 	</g>
