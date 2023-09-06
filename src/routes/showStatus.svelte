@@ -1,7 +1,8 @@
 <script>
     import { onMount } from "svelte";
-    import { getToken, getResponse } from "../stores";
+    import { getToken, getResponse, getCurrentElement } from "../stores";
     import { DateTime } from "luxon";
+    import Clock from "./clock.svelte";
 
     let isOccupied = false;
     let graphData = [];
@@ -21,6 +22,9 @@
         {
             console.error("No Account available!");
         }
+
+        graphData.value = getCurrentElement(graphData);
+
         startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
         endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
         
@@ -35,7 +39,7 @@
 
 <div class:status-container-free={!isOccupied} class:status-container-occupied={isOccupied}>
     <h1>Besprechung 1.OG RG</h1>
-    <img src="clock.png" alt="Eine Uhr"/>
+    <Clock/>
     {#if !isOccupied}
         <p>Raum frei bis zum {startTime}</p>
     {:else}

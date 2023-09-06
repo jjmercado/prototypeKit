@@ -1,5 +1,6 @@
 import { PublicClientApplication, InteractionRequiredAuthError } from "@azure/msal-browser";
 import { configDotenv } from "dotenv";
+import { DateTime } from "luxon";
 
 const msalConfig = {
     auth: {
@@ -65,4 +66,26 @@ export let getToken = async () =>
             throw silentError;
         }
     }
+}
+
+export let getCurrentElement = (graphData) => {
+    let currentTime = DateTime.now();
+    let startTime;
+    let endTime;
+
+    let sortedGraph = graphData.value.sort((a,b) => a.start.dateTime.localeCompare(b.start.dateTime));
+
+    for (let index = 0; index < graphData.value.length; index++) 
+    {
+        startTime = DateTime.fromISO(sortedGraph[index].start.dateTime).plus({ hours: 2 });
+        endTime = DateTime.fromISO(sortedGraph[index].end.dateTime).plus({ hours: 2 });
+
+        if(startTime <= currentTime && endTime <= currentTime)
+        {
+            sortedGraph.splice(index, 1);
+            index--;
+        }
+    }
+    console.log(sortedGraph)
+    return sortedGraph;
 }
