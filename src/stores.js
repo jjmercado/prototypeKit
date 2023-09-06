@@ -26,7 +26,7 @@ export const getResponse = async (accessToken) =>
             headers: headers
     };
     // var graphEndpoint = "https://graph.microsoft.com/v1.0/me";
-    var graphEndpoint = "https://graph.microsoft.com/v1.0/me/calendarview?startdatetime=2023-09-01T05:27:53.758Z&enddatetime=2023-09-08T05:27:53.758Z";
+    var graphEndpoint = "https://graph.microsoft.com/v1.0/me/calendarview?startdatetime=2023-09-01T00:00:01.001Z&enddatetime=2023-09-30T23:59:59.001Z";
     
     let response = await fetch(graphEndpoint, options)
     let body = await response.json();
