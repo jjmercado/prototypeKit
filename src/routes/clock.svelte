@@ -1,17 +1,18 @@
 <script>
 	import { onMount } from 'svelte';
+    import { DateTime } from "luxon";
 
-	let time = new Date();
+	let time = DateTime.now();
 
 	// these automatically update when `time`
 	// changes, because of the `$:` prefix
-	$: hours = time.getHours();
-	$: minutes = time.getMinutes();
-	$: seconds = time.getSeconds();
+	$: hours = time.hour;
+	$: minutes = time.minute;
+	$: seconds = time.second;
 
 	onMount(() => {
 		const interval = setInterval(() => {
-			time = new Date();
+			time = DateTime.now();
 		}, 1000);
 
 		return () => {
