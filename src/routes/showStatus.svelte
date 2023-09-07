@@ -4,7 +4,6 @@
     import { DateTime } from "luxon";
     import Clock from "./clock.svelte";
 
-    let isOccupied = false;
     let graphData = [];
     $: startTime = "";
     $: endTime = "";

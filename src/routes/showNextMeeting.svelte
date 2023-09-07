@@ -1,14 +1,15 @@
 <script>
 
     import { onMount } from "svelte";
-    import { getToken, getResponse, getCurrentElement } from "../stores"; 
+    import { getToken, getResponse, getCurrentElement, time } from "../stores"; 
     import { DateTime } from "luxon";
     
     let graphData = [];
     let organizerName;
     let eventSubject;
-    let startTime;
-    let endTime;
+    $: startTime = "";
+    $: endTime = "";
+    $: currentTime = $time.toFormat("ff");
     
     onMount(async () => {
         let getAccount = sessionStorage.getItem("msalAccount"); 
@@ -31,10 +32,13 @@
         endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
     })
     </script>
-    <!-- Wenn auf Rot zu aktueller Besprechung ändern -->
     <div class="nextMeeting-container">
         <p>
-            Nächste Besprechung
+            {#if !(currentTime >= startTime && currentTime <= endTime)}
+                Nächste Besprechung
+            {:else}
+                Aktuelle Besprechung
+            {/if}
         </p>
         <p>{organizerName}</p>
         <p>{eventSubject}</p>
