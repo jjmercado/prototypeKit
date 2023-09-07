@@ -8,7 +8,9 @@
     $: eventSubject = "";
     $: startTime = "";
     $: endTime = "";
-    $: currentTime = $time.toFormat("ff");
+    $: currentTime = $time;
+    let showStartTime;
+    let showEndTime;
     
     onMount(async () => 
     {
@@ -27,9 +29,20 @@
             graphData.value = getCurrentElement(graphData);  
             organizerName = graphData.value[0].organizer.emailAddress.name;
             eventSubject = graphData.value[0].subject;
-            startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-            endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-        } else 
+            startTime = DateTime.fromISO(graphData.value[0].start.dateTime);
+            endTime = DateTime.fromISO(graphData.value[0].end.dateTime);
+            if (graphData.value[0].isAllDay) 
+            {
+                showStartTime = DateTime.fromISO(graphData.value[0].start.dateTime).setLocale("de").toFormat("ff");
+                showEndTime = DateTime.fromISO(graphData.value[0].end.dateTime).setLocale("de").toFormat("ff");
+            } 
+            else 
+            {
+                showStartTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+                showEndTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");    
+            }
+        } 
+        else 
         {
             console.log("not called");    
         }
@@ -38,16 +51,14 @@
 
 
     <div class="nextMeeting-container">
-        <p>
-            {#if !(currentTime >= startTime && currentTime <= endTime)}
-                Nächste Besprechung
-            {:else}
-                Aktuelle Besprechung
-            {/if}
-        </p>
+        {#if !(currentTime >= startTime && currentTime <= endTime)}
+            <p>Nächste Besprechung</p>
+        {:else}
+            <p>Aktuelle Besprechung</p>
+        {/if}
         <p>{organizerName}</p>
         <p>{eventSubject}</p>
-        <p>{startTime} - {endTime}</p>
+        <p>{showStartTime} - {showEndTime}</p>
     </div>
     
     <style>
