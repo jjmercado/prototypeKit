@@ -10,24 +10,44 @@
     $: currentTime = $time.toFormat("ff");
 
     onMount(async () => {
-        let getAccount = sessionStorage.getItem("msalAccount"); 
+        // let getAccount = sessionStorage.getItem("msalAccount"); 
         
+        // if (getAccount) 
+        // {  
+        //     let accessToken = await getToken();
+        //     graphData = await getResponse(accessToken);
+        // }
+        // else
+        // {
+        //     console.error("No Account available!");
+        // }
+
+        // graphData.value = getCurrentElement(graphData);
+
+        // startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+        // endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+        
+        updateData();
+
+        setInterval(updateData, 30000); 
+    })
+
+    let updateData = async () => 
+    {
+        let getAccount = sessionStorage.getItem("msalAccount");
         if (getAccount) 
-        {  
+        {
             let accessToken = await getToken();
             graphData = await getResponse(accessToken);
-        }
-        else
+            graphData.value = getCurrentElement(graphData);  
+
+            startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+            endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+        } else 
         {
-            console.error("No Account available!");
+            console.log("not called");    
         }
-
-        graphData.value = getCurrentElement(graphData);
-
-        startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-        endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-        
-    })
+    }
 </script>
 
 <div class:status-container-free={!(currentTime >= startTime && currentTime <= endTime)} class:status-container-occupied={currentTime >= startTime && currentTime <= endTime}>

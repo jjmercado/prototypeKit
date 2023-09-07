@@ -1,37 +1,42 @@
 <script>
-
     import { onMount } from "svelte";
     import { getToken, getResponse, getCurrentElement, time } from "../stores"; 
     import { DateTime } from "luxon";
     
-    let graphData = [];
-    let organizerName;
-    let eventSubject;
+    $: graphData = [];
+    $: organizerName = "";
+    $: eventSubject = "";
     $: startTime = "";
     $: endTime = "";
     $: currentTime = $time.toFormat("ff");
     
-    onMount(async () => {
-        let getAccount = sessionStorage.getItem("msalAccount"); 
+    onMount(async () => 
+    {
+        updateData();
         
+        setInterval(updateData, 30000); 
+    })
+
+    let updateData = async () => 
+    {
+        let getAccount = sessionStorage.getItem("msalAccount");
         if (getAccount) 
-        {  
+        {
             let accessToken = await getToken();
             graphData = await getResponse(accessToken);
-        }
-        else
+            graphData.value = getCurrentElement(graphData);  
+            organizerName = graphData.value[0].organizer.emailAddress.name;
+            eventSubject = graphData.value[0].subject;
+            startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+            endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
+        } else 
         {
-            console.error("No Account available!");
+            console.log("not called");    
         }
-    
-        graphData.value = getCurrentElement(graphData);
-
-        organizerName = graphData.value[0].organizer.emailAddress.name;
-        eventSubject = graphData.value[0].subject;
-        startTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-        endTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff");
-    })
+    }
     </script>
+
+
     <div class="nextMeeting-container">
         <p>
             {#if !(currentTime >= startTime && currentTime <= endTime)}
