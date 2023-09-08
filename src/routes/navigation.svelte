@@ -3,16 +3,14 @@
     export let quickBookPath = "/quickbook";
     export let schedulePath = "/schedule";
 
-    let currentDay = new Date();
-    const days = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
-    
+    const weekdays = ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag"];
 </script>
 
 <div class="navigation-container">
     <img src="RG_Logo_Illustration.png" alt="Logo der Rietzler-Gruppe"/>
 
     <div>
-        <p>{days[currentDay.getDay()]}</p>
+        <p>{weekdays[DateTime.now().weekday]}</p>
         <p>
             {DateTime.now().toFormat("dd.MM.yyyy")}
         </p>

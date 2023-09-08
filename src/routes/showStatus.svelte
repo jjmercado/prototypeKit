@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from "svelte";
+    import { onMount, onDestroy} from "svelte";
     import { getToken, getResponse, getCurrentElement, time } from "../stores";
     import { DateTime } from "luxon";
     import Clock from "./clock.svelte";
@@ -10,12 +10,16 @@
     $: currentTime = $time;
     let showStartTime;
     let showEndTime;
-
+    
     onMount(async () => {
-        
+        let intervalID;
         updateData();
         
-        setInterval(updateData, 30000); 
+        intervalID = setInterval(updateData, 30000); 
+
+        return () => {
+            clearInterval(intervalID);
+        }
     })
     
     let updateData = async () => 
@@ -26,8 +30,8 @@
             let accessToken = await getToken();
             graphData = await getResponse(accessToken);
             graphData.value = getCurrentElement(graphData);  
-            calcStartTime = DateTime.fromISO(graphData.value[0].start.dateTime);
-            calcEndTime = DateTime.fromISO(graphData.value[0].end.dateTime);
+            calcStartTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 });
+            calcEndTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 });
             if (graphData.value[0].isAllDay) 
             {
                 showStartTime = DateTime.fromISO(graphData.value[0].start.dateTime).setLocale("de").toFormat("ff");
@@ -43,6 +47,8 @@
             console.log("not called");    
         }
     }
+
+    // NOTE: Alles was aus Microsoft Graph geladen wird, was die Zeiten betrifft, ist trotz zetlicher Umwandlung, zwei Stunden zurück. Daher muss nochmals zwei Stunden drauf gerechnet werden
 </script>
 
 <div class:status-container-free={!(currentTime >= calcStartTime && currentTime <= calcEndTime)} class:status-container-occupied={currentTime >= calcStartTime && currentTime <= calcEndTime}>

@@ -1,24 +1,32 @@
 <script>
-    import { onMount } from "svelte";
     import { getToken, getResponse } from "../../stores";
+    import { DateTime } from "luxon";
 
-    let fullName;
+    // let body;
 
-    onMount(async () => {
+    let call = async () => {
         let accessToken = await getToken();
         let body = await getResponse(accessToken);
-        console.log(body);
-        fullName = body.displayName;
-    })
+
+        let sortedGraph = body.value.sort((a,b) => a.start.dateTime.localeCompare(b.start.dateTime));
+
+        return sortedGraph;
+    }
+
+    let body = call();
 </script>
 
-{#each Array(24) as _}
-    <div>
-        <p>Betreff</p>
-        <p>11:00-13:00</p>
-        <p>{fullName}</p>
-    </div>
-{/each}
+{#await body}
+    <p>Loading...</p>
+{:then body}
+    {#each body as item}
+        <div>
+            <p>{item.subject}</p>
+            <p>{DateTime.fromISO(item.start.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff")} - {DateTime.fromISO(item.end.dateTime).plus({ hours: 2 }).setLocale("de").toFormat("ff")}</p>
+            <p>{item.organizer.emailAddress.name}</p>
+        </div>
+    {/each}
+{/await}
     
 
 <style>

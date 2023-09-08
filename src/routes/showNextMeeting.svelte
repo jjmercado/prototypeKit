@@ -14,10 +14,16 @@
     
     onMount(async () => 
     {
+        let intervalID;
         updateData();
         
         setInterval(updateData, 30000); 
+
+        return () => {
+            clearInterval(intervalID);
+        }
     })
+
 
     let updateData = async () => 
     {
@@ -47,6 +53,15 @@
             console.log("not called");    
         }
     }
+
+    // let promise = new Promise(() => {});
+    // onMount(() => {
+    //     promise = (async () => {
+    //     const response = await fetch(...);
+    //     // ...
+    //     return data; 
+    //     })();
+    // });
     </script>
 
 
