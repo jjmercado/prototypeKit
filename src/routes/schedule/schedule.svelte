@@ -3,10 +3,14 @@
     import { DateTime } from "luxon";
 
     // let body;
+    let calendarTime = {
+        startTime: "2023-09-01T00:00:04.424Z",
+        endTime: "2023-09-30T23:59:04.424Z",
+    };
 
     let call = async () => {
         let accessToken = await getToken();
-        let body = await getResponse(accessToken);
+        let body = await getResponse(accessToken, calendarTime.startTime, calendarTime.endTime);
 
         let sortedGraph = body.value.sort((a,b) => a.start.dateTime.localeCompare(b.start.dateTime));
 

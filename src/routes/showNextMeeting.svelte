@@ -3,6 +3,10 @@
     import { getToken, getResponse, getCurrentElement, time } from "../stores"; 
     import { DateTime } from "luxon";
     
+    let calendarTime = {
+        startTime: "2023-09-01T00:00:04.424Z",
+        endTime: "2023-09-30T23:59:04.424Z",
+    }
     $: graphData = [];
     $: organizerName = "";
     $: eventSubject = "";
@@ -31,7 +35,7 @@
         if (getAccount) 
         {
             let accessToken = await getToken();
-            graphData = await getResponse(accessToken);
+            graphData = await getResponse(accessToken, calendarTime.startTime, calendarTime.endTime);
             graphData.value = getCurrentElement(graphData);  
             organizerName = graphData.value[0].organizer.emailAddress.name;
             eventSubject = graphData.value[0].subject;

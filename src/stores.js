@@ -18,7 +18,7 @@ var loginRequest =
 const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
 
-export const getResponse = async (accessToken) => 
+export const getResponse = async (accessToken, startTime, endTime) => 
 {
     var headers = new Headers();
     var bearer = "Bearer " + accessToken;
@@ -28,7 +28,7 @@ export const getResponse = async (accessToken) =>
             headers: headers
     };
     // var graphEndpoint = "https://graph.microsoft.com/v1.0/me";
-    var graphEndpoint = "https://graph.microsoft.com/v1.0/me/calendarview?startdatetime=2023-09-01T00:00:01.001Z&enddatetime=2023-09-30T23:59:59.001Z";
+    var graphEndpoint = `https://graph.microsoft.com/v1.0/me/calendarview?startdatetime=${startTime}&enddatetime=${endTime}`;
     
     let response = await fetch(graphEndpoint, options)
     let body = await response.json();

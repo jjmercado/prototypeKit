@@ -4,6 +4,10 @@
     import { DateTime } from "luxon";
     import Clock from "./clock.svelte";
 
+    let calendarTime = {
+        startTime: "2023-09-01T00:00:04.424Z",
+        endTime: "2023-09-30T23:59:04.424Z",
+    }
     let graphData = [];
     $: calcStartTime = "";
     $: calcEndTime = "";
@@ -28,7 +32,7 @@
         if (getAccount) 
         {
             let accessToken = await getToken();
-            graphData = await getResponse(accessToken);
+            graphData = await getResponse(accessToken, calendarTime.startTime, calendarTime.endTime);
             graphData.value = getCurrentElement(graphData);  
             calcStartTime = DateTime.fromISO(graphData.value[0].start.dateTime).plus({ hours: 2 });
             calcEndTime = DateTime.fromISO(graphData.value[0].end.dateTime).plus({ hours: 2 });
