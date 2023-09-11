@@ -2,10 +2,12 @@
     import { getToken, getResponse } from "../../stores";
     import { DateTime } from "luxon";
 
+    let currendDay = DateTime.now().day;
+
     // let body;
     let calendarTime = {
-        startTime: "2023-09-08T00:00:04.424Z",
-        endTime: "2023-09-08T23:59:04.424Z",
+        startTime: `2023-09-${currendDay}T00:00:04.424Z`,
+        endTime: `2023-09-${currendDay}T23:59:04.424Z`,
     };
 
     let call = async () => {
@@ -16,7 +18,7 @@
 
         return sortedGraph;
     }
-
+    
     let body = call();
 </script>
 

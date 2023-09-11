@@ -15,7 +15,7 @@
         if (!getAccount) 
         {  
             await signIn();
-            location.reaload();
+            location.reload();
         }
     });
         

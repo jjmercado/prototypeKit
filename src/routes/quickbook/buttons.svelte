@@ -1,10 +1,22 @@
+<script>
+    import Modal from "./modal.svelte";
+
+    const buttonValues = [30, 60, 90, 120, "+"];
+    
+    let showModal = false;
+</script>
+
 <div class="button-container">
-    <button>30 min</button>
-    <button>60 min</button>
-    <button>90 min</button>
-    <button>120 min</button>
-    <button>+</button>
+    {#each buttonValues as value}
+        {#if value === "+"}
+            <button>{value}</button>
+        {:else}
+            <button on:click={() => showModal = true}>{value} min</button>
+        {/if}
+    {/each}
 </div>
+
+<Modal bind:showModal />
 
 <style>
     .button-container
@@ -21,5 +33,7 @@
     {
         width: 10rem;
         height: 10rem;
+        font-size: 2rem;
     }
 </style>
+
