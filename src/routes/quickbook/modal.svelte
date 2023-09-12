@@ -1,8 +1,7 @@
 <script>
-    import { onMount, afterUpdate, beforeUpdate } from "svelte";
     import { Client } from "@microsoft/microsoft-graph-client";
-    import { PublicClientApplication } from "@azure/msal-browser";
     import {AuthCodeMSALBrowserAuthenticationProvider} from  "@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser";
+    import { msalInstance } from "../../stores";
 
     export let showModal;
     let dialog;
@@ -14,85 +13,96 @@
         return url;
     }
 
+    var loginRequest = 
+    {
+        scopes: ["user.read", "mail.send"] // optional Array<string>
+    };
+
     const setEvent = async () => 
     {
-        const pca = new PublicClientApplication({
-            auth: {
-                clientId: "0426853a-440c-46ea-a168-2c573eacc496",
-                // authority: `https://login.microsoft.online/${"2dbdec17-eed4-4f75-a818-699c956064f5"}`,
-                redirectUri: "http://localhost:5173",
-            },
-            });
+        // const pca = new PublicClientApplication({
+        //     auth: {
+        //         clientId: "0426853a-440c-46ea-a168-2c573eacc496",
+        //         // authority: `https://login.microsoft.online/${"2dbdec17-eed4-4f75-a818-699c956064f5"}`,
+        //         redirectUri: "http://localhost:5173",
+        //     },
+        //     });
     
-            pca.initialize();
+        //     pca.initialize();
     
             // Authenticate to get the user's account
-            const authResult = await pca.acquireTokenPopup({
-            scopes: ['User.Read'],
-            });
-    
-            if (!authResult.account) {
-            throw new Error('Could not authenticate');
-            }
-    
-            // @microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser
-            const authProvider = new AuthCodeMSALBrowserAuthenticationProvider(pca, {
-            account: authResult.account,
-            // interactionType: InteractionType.Popup,
-            scopes: ['User.Read'],
-            });
-    
-            //------------------------------------------------------------------------
-    
-            const graphClient = Client.initWithMiddleware({ authProvider: authProvider });
-            const url = await getURL();
-            console.log(url.searchParams.get("title"));
-            if (url.searchParams.get("title")) 
+        
+        let account = sessionStorage.getItem('msalAccount');
+        const silentRequest = 
+        {
+            scopes: loginRequest.scopes,
+            account: msalInstance.getAccountByUsername(account)
+        };
+
+        const authResult = await msalInstance.acquireTokenSilent(silentRequest);
+
+        if (!authResult.account) {
+        throw new Error('Could not authenticate');
+        }
+
+        // @microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser
+        const authProvider = new AuthCodeMSALBrowserAuthenticationProvider(msalInstance, {
+        account: authResult.account,
+        // interactionType: InteractionType.Popup,
+        scopes: ['User.Read'],
+        });
+
+        //------------------------------------------------------------------------
+
+        const graphClient = Client.initWithMiddleware({ authProvider: authProvider });
+        const url = await getURL();
+
+        if (url.searchParams.get("title")) 
+        {
+            let event = 
             {
-                let event = 
-                {
-                    subject: url.searchParams.get("title"),
-                    // body: {
-                    //     contentType: 'HTML',
-                    //     content: url.searchParams.get("description")
-                    // },
-                    start: {
-                        dateTime: url.searchParams.get("start"),
-                        timeZone: 'UTC'
-                    },
-                    end: {
-                        dateTime: url.searchParams.get("end"),
-                        timeZone: 'UTC'
-                    },
-                    // location: {
-                    //     displayName: url.searchParams.get("location")
-                    // },
-                    // attendees: [
-                    //     {
-                    //     emailAddress: {
-                    //         address: 'jery19@live.de',
-                    //         name: 'Jeremy Mercado'
-                    //     },
-                    //     type: 'required'
-                    //     }
-                    // ],
-                    // allowNewTimeProposals: true,
-                    // transactionId: '7E163156-7762-4BEB-A1C6-729EA81755A7'
-                };
-    
-                await graphClient.api('/me/events')
-                    .post(event);    
-            } else 
-            {
-                console.error("No URL found");    
-            }
+                subject: url.searchParams.get("title"),
+                // body: {
+                //     contentType: 'HTML',
+                //     content: url.searchParams.get("description")
+                // },
+                start: {
+                    dateTime: url.searchParams.get("start"),
+                    timeZone: 'UTC'
+                },
+                end: {
+                    dateTime: url.searchParams.get("end"),
+                    timeZone: 'UTC'
+                },
+                // location: {
+                //     displayName: url.searchParams.get("location")
+                // },
+                // attendees: [
+                //     {
+                //     emailAddress: {
+                //         address: 'jery19@live.de',
+                //         name: 'Jeremy Mercado'
+                //     },
+                //     type: 'required'
+                //     }
+                // ],
+                // allowNewTimeProposals: true,
+                // transactionId: '7E163156-7762-4BEB-A1C6-729EA81755A7'
+            };
+
+            await graphClient.api('/me/events')
+                .post(event);    
+        } else 
+        {
+            console.error("No URL found");    
+        }
             
     };
 
 
 </script>
 <dialog bind:this={dialog} on:close={() => showModal = false}>
-    <form on:submit={setEvent}>
+    <form on:submit={() => setTimeout(setEvent, 100)} action="/quickbook">
         <div>
             <div>
                 <label for="title">Titel</label>

@@ -3,19 +3,19 @@ import { configDotenv } from "dotenv";
 import { DateTime } from "luxon";
 import { readable } from "svelte/store";
 
-const msalConfig = {
-    auth: {
-        clientId: "0426853a-440c-46ea-a168-2c573eacc496",
-        redirectUri: configDotenv.OAUTH_REDIRECT_URI,
-    }
-    };
-
 var loginRequest = 
 {
     scopes: ["user.read", "mail.send"] // optional Array<string>
 };
 
-const msalInstance = new PublicClientApplication(msalConfig);
+const msalConfig = {
+    auth: {
+        clientId: "0426853a-440c-46ea-a168-2c573eacc496",
+        redirectUri: configDotenv.OAUTH_REDIRECT_URI,
+    }
+};
+
+export const msalInstance = new PublicClientApplication(msalConfig);
 await msalInstance.initialize();
 
 export const getResponse = async (accessToken, startTime, endTime) => 
